@@ -104,6 +104,9 @@ bool ladder_pressed(int expected, int actual) {
 void neopixel_switch(int led, bool on) {
   uint32_t color;
 
+  if(led < 0) {
+    return;
+  }
   if(on) {
     color = Adafruit_NeoPixel::Color(255, 64, 0);
   }

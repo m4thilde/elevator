@@ -11,7 +11,7 @@ void cabin_init(int start) {
   pinMode(PIN_MOTOR_CABIN_A, OUTPUT);
   pinMode(PIN_MOTOR_CABIN_B, OUTPUT);
   pinMode(PIN_MOTOR_DOORS_A, OUTPUT);
-  pinMode(PIN_MOTOR_DOORS_A, OUTPUT);
+  pinMode(PIN_MOTOR_DOORS_B, OUTPUT);
   _current_floor = start;
 }
 
@@ -20,7 +20,7 @@ int cabin_current_floor() {
 }
 
 void cabin_stop() {
-  motor(PIN_MOTOR_DOORS_A, PIN_MOTOR_DOORS_B, 0);
+  motor(PIN_MOTOR_CABIN_A, PIN_MOTOR_CABIN_B, 0);
 }
 
 void cabin_door(int dir) {
