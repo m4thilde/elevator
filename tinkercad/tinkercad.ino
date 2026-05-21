@@ -80,10 +80,10 @@ int  floor_requested(int from);
 
 floor_info building[FLOOR_NUM] = {
   //                               --led--  --btn--
-  // title        key disp  def    up down  up down pressed
-  { "Parking  " , '*', -1, false ,  9,  0,  84,  -1,   0 },
-  { "RDC      "  , '0',  0, true  , 11, 10, 101,  93,   0 },
-  { "1er etage" , '1',  1, false , 13, 12, 118, 110,   0 }
+  // title              key disp  def    up down  up  down pressed
+  { "Parking         " , '*', -1, false ,  9,  0,  84,  -1,   0 },
+  { "RDC             " , '0',  0, true  , 11, 10, 101,  93,   0 },
+  { "1er etage       " , '1',  1, false , 13, 12, 118, 110,   0 }
 };
 
 enum states {
@@ -113,29 +113,30 @@ void loop() {
   switch(state) {
     case STATE_OPENED:
       target = floor_requested(cabin_current_floor());
-      status = "(waiting...)   ";
-      if(timer_elapsed(timer, TIME_OPENED) && target>=0) {
+      status = "(waiting...)    ";
+      if(target >= 0 && millis() - timer >= TIME_OPENED) {
+        timer_reset(timer);
         cabin_door(CABIN_DOOR_CLOSE);
         state = STATE_CLOSING;
       }
       break;
     case STATE_CLOSING:
       cabin_door(CABIN_DOOR_CLOSE);
-      status = "(closing doors)";
+      status = "(closing doors) ";
       if(timer_elapsed(timer, TIME_DOORS)) {
         cabin_door(CABIN_DOOR_STOP);
         state = STATE_MOVING;
       }
       break;
     case STATE_MOVING: 
-      status = "(moving)       ";
+      status = "(moving)        ";
       if(cabin_move(timer, target, movetime()) == target) {
         cabin_stop();
         state = STATE_OPENING;
       }
       break;
     case STATE_OPENING:
-      status = "(opening doors)";
+      status = "(opening doors) ";
       cabin_door(CABIN_DOOR_OPEN);
       if(timer_elapsed(timer, TIME_DOORS)) {
         cabin_door(CABIN_DOOR_STOP);
@@ -188,7 +189,7 @@ void cabin_init(int start) {
   pinMode(PIN_MOTOR_CABIN_A, OUTPUT);
   pinMode(PIN_MOTOR_CABIN_B, OUTPUT);
   pinMode(PIN_MOTOR_DOORS_A, OUTPUT);
-  pinMode(PIN_MOTOR_DOORS_A, OUTPUT);
+  pinMode(PIN_MOTOR_DOORS_B, OUTPUT);
   _current_floor = start;
 }
 
@@ -197,7 +198,7 @@ int cabin_current_floor() {
 }
 
 void cabin_stop() {
-  motor(PIN_MOTOR_DOORS_A, PIN_MOTOR_DOORS_B, 0);
+  motor(PIN_MOTOR_CABIN_A, PIN_MOTOR_CABIN_B, 0);
 }
 
 void cabin_door(int dir) {
